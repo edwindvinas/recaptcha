@@ -56,6 +56,7 @@ func (r *R) Verify(req http.Request) bool {
 	c := appengine.NewContext(req)
 	r.lastError = make([]string, 1)
 	response := req.FormValue("g-recaptcha-response")
+	c.Infof("g-recaptcha-response: %v", response)
 	//REV001
 	//client := &http.Client{Timeout: 20 * time.Second}
 	client := urlfetch.Client(c)
