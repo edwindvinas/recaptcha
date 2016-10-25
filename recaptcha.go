@@ -14,6 +14,11 @@
 // Available on github: http://github.com/haisum/recaptcha
 //
 // Author: Haisum (haisumbhatti@gmail.com)
+//----------------------------------------------
+// REV001 - Updated to use urlfetch
+// Author: Edwin (edwin.d.vinas@gmail.com)
+//----------------------------------------------
+
 package recaptcha
 
 import (
@@ -22,6 +27,9 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	//REV001
+	"appengine/urlfetch"
+	
 )
 
 // R type represents an object of Recaptcha and has public property Secret,
@@ -44,9 +52,13 @@ var postURL = "https://www.google.com/recaptcha/api/siteverify"
 // This method also records any errors in validation.
 // These errors can be received by calling LastError() method.
 func (r *R) Verify(req http.Request) bool {
+	//REV001
+	c := appengine.NewContext(req)
 	r.lastError = make([]string, 1)
 	response := req.FormValue("g-recaptcha-response")
-	client := &http.Client{Timeout: 20 * time.Second}
+	//REV001
+	//client := &http.Client{Timeout: 20 * time.Second}
+	client := urlfetch.Client(c)
 	resp, err := client.PostForm(postURL,
 		url.Values{"secret": {r.Secret}, "response": {response}})
 	if err != nil {
